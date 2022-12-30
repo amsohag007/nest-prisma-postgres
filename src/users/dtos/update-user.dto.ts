@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { FieldStatusEnum, Prisma } from '@prisma/client';
-import { Exclude } from 'class-transformer';
 
 import {
   IsBoolean,
@@ -14,16 +13,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class UserDTO {
-  @ApiProperty({
-    description: 'User firstName.',
-    type: String,
-    required: false,
-  })
-  @IsDefined()
-  @IsUUID()
-  id: string;
-
+export class UpdateUserDTO {
   @ApiPropertyOptional({
     description: 'User firstName.',
     type: String,
@@ -69,14 +59,13 @@ export class UserDTO {
   @IsString()
   phone: string;
 
-  // @ApiPropertyOptional({
-  //   description: 'User password ',
-  //   type: String,
-  //   required: false,
-  // })
-  // @IsOptional()
-  // @IsString()
-  @Exclude()
+  @ApiPropertyOptional({
+    description: 'User password ',
+    type: String,
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
   password?: string;
 
   @ApiPropertyOptional({
@@ -88,84 +77,66 @@ export class UserDTO {
   @IsObject()
   address?: Prisma.JsonValue;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Boolean,
     description: 'Is admin',
     required: false,
   })
-  @IsDefined()
+  @IsOptional()
   @IsBoolean()
-  isAdmin: boolean;
+  isAdmin?: boolean;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Boolean,
     description: 'Is Super User',
     required: false,
   })
-  @IsDefined()
+  @IsOptional()
   @IsBoolean()
-  isSuperUser: boolean;
+  isSuperUser?: boolean;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Boolean,
     description: 'Is email verified',
     required: false,
   })
-  @IsDefined()
+  @IsOptional()
   @IsBoolean()
-  isEmailVerified: boolean;
+  isEmailVerified?: boolean;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: Boolean,
     description: 'Is phone verified',
     required: false,
   })
-  @IsDefined()
+  @IsOptional()
   @IsBoolean()
-  isPhoneVerified: boolean;
+  isPhoneVerified?: boolean;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Record Status.',
     enum: FieldStatusEnum,
     required: false,
   })
-  @IsDefined()
+  @IsOptional()
   @IsEnum(FieldStatusEnum)
-  status: FieldStatusEnum;
+  status?: FieldStatusEnum;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Extra details of the records can be put here.',
     type: JSON,
     required: false,
   })
-  @IsDefined()
+  @IsOptional()
   @IsObject()
   metaData?: Prisma.JsonValue;
-
-  @ApiProperty({
-    description: 'user id by whom the record was created.',
-    type: String,
-    required: false,
-  })
-  @IsDefined()
-  @IsUUID()
-  createdById?: string;
-
-  @ApiProperty({
-    description: 'time when the record was created.',
-    type: Date,
-    required: false,
-  })
-  @IsDefined()
-  @IsDateString({ strict: true } as any)
-  createdAt?: Date;
 
   @ApiPropertyOptional({
     description: 'user id by whom the record was updated.',
     type: String,
     required: false,
   })
-  @IsDefined()
+  @IsOptional()
   @IsUUID()
   updatedById: string;
 
@@ -174,10 +145,11 @@ export class UserDTO {
     type: Date,
     required: false,
   })
-  @IsDefined()
+  @IsOptional()
   @IsDateString({ strict: true } as any)
-  updatedAt!: Date;
-  constructor(partial: Partial<UserDTO>) {
+  updatedAt?: Date;
+
+  constructor(partial: Partial<UpdateUserDTO>) {
     Object.assign(this, partial);
   }
 }
