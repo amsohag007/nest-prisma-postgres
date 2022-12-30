@@ -105,14 +105,14 @@ model UserOrders {
   items        Json?
 
   /// subtotalprice before adjusting vat,deliveryfee and discount
-  subTotalPrice Float? @db.Real
-  deliveryFee   Float? @db.Real
-  vat           Float? @db.Real
-  discount      Float? @db.Real
-  totalPrice    Float? @db.Real
+  subTotalPrice Float? @default(0) @db.Real
+  deliveryFee   Float? @default(0) @db.Real
+  vat           Float? @default(0) @db.Real
+  discount      Float? @default(0) @db.Real
+  totalPrice    Float? @default(0) @db.Real
 
   /// current status of order
-  orderTyoe   OrderTypeEnum   @default(DELIVERY)
+  orderType   OrderTypeEnum   @default(DELIVERY)
   /// current status of order
   orderStatus OrderStatusEnum @default(PENDING)
 
