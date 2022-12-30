@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/core/services/prisma.services';
 import { ApiResponseDTO } from 'src/core/dtos';
-import { UserDTO } from '../dtos';
+import { CreateUserDTO, UpdateUserDTO, UserDTO } from '../dtos';
 
 @Injectable()
 export class UsersService {
   constructor(private prismaService: PrismaService) {}
 
   //create new --------
-  async create(createUserDTO): Promise<ApiResponseDTO<UserDTO>> {
+  async create(createUserDTO: CreateUserDTO): Promise<ApiResponseDTO<UserDTO>> {
     try {
-      const createdUser = await this.prismaService.user.create({
+      console.log(createUserDTO);
+      const createdUser = await this.prismaService.users.create({
         data: {
           ...createUserDTO,
         },
@@ -18,7 +19,7 @@ export class UsersService {
 
       return {
         status: 'success',
-        data: new UserDTO(createdUser),
+        data: createdUser,
         message: 'The User Users has been successfully created.',
       };
     } catch (error) {
@@ -29,7 +30,7 @@ export class UsersService {
   // find all--------
   async findAll(): Promise<any> {
     try {
-      const totalCount = await this.prismaService.user.count({});
+      const totalCount = await this.prismaService.users.count({});
       if (totalCount === 0) {
         return {
           status: 'success',
@@ -38,11 +39,11 @@ export class UsersService {
         };
       }
 
-      const User = await this.prismaService.user.findMany({});
+      const Users = await this.prismaService.users.findMany({});
 
       return {
         status: 'success',
-        data: User,
+        data: Users,
         message: ' Users retrieve successful.',
       };
     } catch (error) {
@@ -53,7 +54,7 @@ export class UsersService {
   //find one ------
   async findOne(id: any): Promise<any> {
     try {
-      const user = await this.prismaService.user.findUnique({
+      const user = await this.prismaService.users.findUnique({
         where: {
           id: id,
         },
@@ -63,13 +64,13 @@ export class UsersService {
         return {
           status: 'success',
           data: null,
-          message: 'No user found.',
+          message: 'No users found.',
         };
       }
       return {
         status: 'success',
         data: user,
-        message: ' Users retrieve successful.',
+        message: ' User retrieve successful.',
       };
     } catch (error) {
       console.log('error', error);
@@ -79,10 +80,10 @@ export class UsersService {
   //update ----------
   async update(
     id: any,
-    updateUserDTO: object,
+    updateUserDTO: UpdateUserDTO,
   ): Promise<ApiResponseDTO<UserDTO>> {
     try {
-      const updatedUserData = await this.prismaService.user.update({
+      const updatedUserData = await this.prismaService.users.update({
         where: {
           id: id,
         },
@@ -106,7 +107,7 @@ export class UsersService {
     updateUserStatusDTO: object,
   ): Promise<ApiResponseDTO<UserDTO>> {
     try {
-      const updatedUserData = await this.prismaService.user.update({
+      const updatedUserData = await this.prismaService.users.update({
         where: {
           id: id,
         },
@@ -127,7 +128,7 @@ export class UsersService {
   //remove
   async remove(id: any) {
     try {
-      return await this.prismaService.user.delete({
+      return await this.prismaService.users.delete({
         where: {
           id: id,
         },

@@ -84,7 +84,7 @@ export class UsersController {
   @ApiParam({
     name: 'id',
     description: 'Should be an id of a user that exists in the database.',
-    type: Number,
+    type: String,
     required: true,
   })
   @ApiOkResponse({
@@ -97,7 +97,7 @@ export class UsersController {
     description: 'No data found.',
   })
   @ApiProduces('application/json')
-  async findOne(@Param('id') id: any): Promise<ApiResponseDTO<UserDTO>> {
+  async findOne(@Param('id') id: string): Promise<ApiResponseDTO<UserDTO>> {
     return await this.usersUserService.findOne(id);
   }
 
@@ -108,6 +108,13 @@ export class UsersController {
   @ApiOkResponse({
     description: 'Record has been updated successfully.',
     type: UserDTO,
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Should be an id of user that exists in the database.',
+    type: String,
+    format: 'uuid',
+    required: true,
   })
   @ApiBody({
     type: UpdateUserDTO,
