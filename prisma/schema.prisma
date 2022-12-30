@@ -39,11 +39,11 @@ model Users {
   /// user's username which will be used for creating an account
   userName  String  @unique @db.VarChar(255)
   /// user's email 
-  email     String? @unique @db.VarChar(255)
+  email     String  @unique @db.VarChar(255)
   /// user's phone
   phone     String? @unique @db.VarChar(255)
   /// user's password
-  password  String  @db.VarChar(255)
+  password  String? @db.VarChar(255)
   /// user's address
   address   Json?   @default("{}")
 
@@ -72,7 +72,7 @@ model Users {
 }
 
 model UserAPIKeys {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   ///generated api key 
   apiKey     String   @db.VarChar(255)
   /// count to limit usage
@@ -95,7 +95,7 @@ model UserAPIKeys {
 }
 
 model UserOrders {
-  id Int @id @default(autoincrement())
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   /// customer info
   customerInfo Json? @default("{}")
