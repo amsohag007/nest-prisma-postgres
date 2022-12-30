@@ -155,7 +155,7 @@ export class OrdersController {
     required: true,
   })
   @ApiBody({
-    type: UpdateOrderDTO,
+    type: UpdateOrderStatusDTO,
     description: 'Data to update record.',
     required: true,
   })

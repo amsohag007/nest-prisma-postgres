@@ -13,9 +13,10 @@ export class OrdersService {
   constructor(private prismaService: PrismaService) {}
 
   //create new --------
-  async create(createOrderDTO: CreateOrderDTO): Promise<ApiResponseDTO<any>> {
+  async create(
+    createOrderDTO: CreateOrderDTO,
+  ): Promise<ApiResponseDTO<OrderDTO>> {
     try {
-      console.log(createOrderDTO);
       const createdOrder = await this.prismaService.userOrders.create({
         data: {
           ...createOrderDTO,
