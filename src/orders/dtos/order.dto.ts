@@ -14,9 +14,9 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class UserDTO {
+export class OrderDTO {
   @ApiProperty({
-    description: 'User firstName.',
+    description: 'Order firstName.',
     type: String,
     required: false,
   })
@@ -24,105 +24,81 @@ export class UserDTO {
   @IsUUID()
   id: string;
 
-  @ApiPropertyOptional({
-    description: 'User firstName.',
+  @ApiProperty({
+    description: 'Order userId.',
     type: String,
     required: false,
   })
-  @IsOptional()
-  @IsString()
-  firstName: string;
+  @IsDefined()
+  @IsUUID()
+  userId: string;
 
   @ApiPropertyOptional({
-    description: 'User lastName.',
-    type: String,
-    required: false,
-  })
-  @IsOptional()
-  @IsString()
-  lastName: string;
-
-  @ApiProperty({
-    description: 'User userName ',
-    type: String,
-    required: true,
-  })
-  @IsDefined()
-  @IsString()
-  userName: string;
-
-  @ApiProperty({
-    description: 'User email ',
-    type: String,
-    required: true,
-  })
-  @IsDefined()
-  @IsEmail()
-  email: string;
-
-  @ApiProperty({
-    description: 'User phone ',
-    type: String,
-    required: true,
-  })
-  @IsOptional()
-  @IsString()
-  phone: string;
-
-  // @ApiPropertyOptional({
-  //   description: 'User password ',
-  //   type: String,
-  //   required: false,
-  // })
-  // @IsOptional()
-  // @IsString()
-  @Exclude()
-  password?: string;
-
-  @ApiPropertyOptional({
-    description: 'User address ',
+    description: 'Customer info ',
     type: JSON,
     required: false,
   })
   @IsOptional()
   @IsObject()
-  address?: Prisma.JsonValue;
+  customerInfo?: Prisma.JsonValue;
 
-  @ApiProperty({
-    type: Boolean,
-    description: 'Is admin',
+  @ApiPropertyOptional({
+    description: 'Customer deliveryInfo ',
+    type: JSON,
     required: false,
   })
-  @IsDefined()
-  @IsBoolean()
-  isAdmin: boolean;
+  @IsOptional()
+  @IsObject()
+  deliveryInfo?: Prisma.JsonValue;
 
-  @ApiProperty({
-    type: Boolean,
-    description: 'Is Super User',
+  @ApiPropertyOptional({
+    description: 'Customer deliveryInfo ',
+    type: JSON,
     required: false,
   })
-  @IsDefined()
-  @IsBoolean()
-  isSuperUser: boolean;
+  @IsOptional()
+  @IsObject()
+  items?: Prisma.JsonValue;
 
-  @ApiProperty({
-    type: Boolean,
-    description: 'Is email verified',
+  @ApiPropertyOptional({
+    description: 'subTotalPrice',
+    type: Number,
     required: false,
   })
-  @IsDefined()
-  @IsBoolean()
-  isEmailVerified: boolean;
+  @IsOptional()
+  subTotalPrice: Number;
 
-  @ApiProperty({
-    type: Boolean,
-    description: 'Is phone verified',
+  @ApiPropertyOptional({
+    description: 'deliveryFee',
+    type: Number,
     required: false,
   })
-  @IsDefined()
-  @IsBoolean()
-  isPhoneVerified: boolean;
+  @IsOptional()
+  deliveryFee: Number;
+
+  @ApiPropertyOptional({
+    description: 'vat',
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  vat: Number;
+
+  @ApiPropertyOptional({
+    description: 'discount',
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  discount: Number;
+
+  @ApiPropertyOptional({
+    description: 'totalPrice',
+    type: Number,
+    required: false,
+  })
+  @IsOptional()
+  totalPrice: Number;
 
   @ApiProperty({
     description: 'Record Status.',
@@ -177,7 +153,8 @@ export class UserDTO {
   @IsDefined()
   @IsDateString({ strict: true } as any)
   updatedAt!: Date;
-  constructor(partial: Partial<UserDTO>) {
+
+  constructor(partial: Partial<OrderDTO>) {
     Object.assign(this, partial);
   }
 }

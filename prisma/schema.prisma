@@ -10,18 +10,120 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+/// list of field status type
+enum FieldStatusEnum {
+  ACTIVE
+  INACTIVE
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean? @default(false)
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+enum OrderStatusEnum {
+  PENDING
+  RECEIVED
+  PRINTED
+  DELIVERED
+  COMPLETED
+}
+
+enum OrderTypeEnum {
+  DELIVERY
+  PICKEDUP
+}
+
+model Users {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  /// user's first name
+  firstName String? @db.VarChar(255)
+  /// user's last name
+  lastName  String? @db.VarChar(255)
+  /// user's username which will be used for creating an account
+  userName  String  @unique @db.VarChar(255)
+  /// user's email 
+  email     String  @unique @db.VarChar(255)
+  /// user's phone
+  phone     String? @unique @db.VarChar(255)
+  /// user's password
+  password  String? @db.VarChar(255)
+  /// user's address
+  address   Json?   @default("{}")
+
+  /// define if the user is an admin or not
+  isAdmin         Boolean @default(false)
+  /// define if the user is a super User or not
+  isSuperUser     Boolean @default(false)
+  /// define if the user's email is verified or not
+  isEmailVerified Boolean @default(false)
+  /// define if the user's phone is verified or not
+  isPhoneVerified Boolean @default(false)
+
+  metaData    Json?           @default("{}")
+  status      FieldStatusEnum @default(ACTIVE)
+  createdById String?         @db.Uuid
+  updatedById String?         @db.Uuid
+  createdAt   DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime?       @updatedAt
+
+  /// associated api keys
+  apiKeys UserAPIKeys[]
+  /// associated api orders
+  orders  UserOrders[]
+
+  @@index([userName, email])
+}
+
+model UserAPIKeys {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  ///generated api key 
+  apiKey     String   @db.VarChar(255)
+  /// count to limit usage
+  usageCount Int      @default(0)
+  /// check if the key is revoked?
+  isRevoked  Boolean  @default(false)
+  /// api keus expire date
+  expiresAt  DateTime @default(now()) @db.Timestamptz(6)
+
+  metaData    Json?           @default("{}")
+  status      FieldStatusEnum @default(ACTIVE)
+  createdById String?         @db.Uuid
+  updatedById String?         @db.Uuid
+  createdAt   DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime?       @updatedAt
+
+  /// ID of associated user
+  userId String @db.Uuid
+  user   Users  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserOrders {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  /// customer info
+  customerInfo Json? @default("{}")
+  /// delivery address and time info
+  deliveryInfo Json? @default("{}")
+  /// array of order items object
+  items        Json?
+
+  /// subtotalprice before adjusting vat,deliveryfee and discount
+  subTotalPrice Float? @default(0) @db.Real
+  deliveryFee   Float? @default(0) @db.Real
+  vat           Float? @default(0) @db.Real
+  discount      Float? @default(0) @db.Real
+  totalPrice    Float? @default(0) @db.Real
+
+  /// current status of order
+  orderType   OrderTypeEnum   @default(DELIVERY)
+  /// current status of order
+  orderStatus OrderStatusEnum @default(PENDING)
+
+  metaData    Json?           @default("{}")
+  status      FieldStatusEnum @default(ACTIVE)
+  createdById String?         @db.Uuid
+  updatedById String?         @db.Uuid
+  createdAt   DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime?       @updatedAt
+
+  /// ID of associated user
+  userId String @db.Uuid
+  user   Users  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

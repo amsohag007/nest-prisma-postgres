@@ -1,26 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/core/services/prisma.services';
 import { ApiResponseDTO } from 'src/core/dtos';
-import { CreateUserDTO, UpdateUserDTO, UserDTO } from '../dtos';
+import {
+  CreateOrderDTO,
+  UpdateOrderDTO,
+  OrderDTO,
+  UpdateOrderStatusDTO,
+} from '../dtos';
 
 @Injectable()
-export class UsersService {
+export class OrdersService {
   constructor(private prismaService: PrismaService) {}
 
   //create new --------
-  async create(createUserDTO: CreateUserDTO): Promise<ApiResponseDTO<UserDTO>> {
+  async create(
+    createOrderDTO: CreateOrderDTO,
+  ): Promise<ApiResponseDTO<OrderDTO>> {
     try {
-      console.log(createUserDTO);
-      const createdUser = await this.prismaService.users.create({
+      const createdOrder = await this.prismaService.userOrders.create({
         data: {
-          ...createUserDTO,
+          ...createOrderDTO,
         },
       });
 
       return {
         status: 'success',
-        data: createdUser,
-        message: 'The User Users has been successfully created.',
+        data: new OrderDTO(createdOrder),
+        message: 'The Order Orders has been successfully created.',
       };
     } catch (error) {
       console.log('error', error);
@@ -30,7 +36,7 @@ export class UsersService {
   // find all--------
   async findAll(): Promise<any> {
     try {
-      const totalCount = await this.prismaService.users.count({});
+      const totalCount = await this.prismaService.userOrders.count({});
       if (totalCount === 0) {
         return {
           status: 'success',
@@ -39,12 +45,12 @@ export class UsersService {
         };
       }
 
-      const Users = await this.prismaService.users.findMany({});
+      const orders = await this.prismaService.userOrders.findMany({});
 
       return {
         status: 'success',
-        data: Users,
-        message: ' Users retrieve successful.',
+        data: orders,
+        message: ' Orders retrieve successful.',
       };
     } catch (error) {
       console.log('error', error);
@@ -54,23 +60,23 @@ export class UsersService {
   //find one ------
   async findOne(id: any): Promise<any> {
     try {
-      const user = await this.prismaService.users.findUnique({
+      const order = await this.prismaService.userOrders.findUnique({
         where: {
           id: id,
         },
       });
 
-      if (user === null) {
+      if (order === null) {
         return {
           status: 'success',
           data: null,
-          message: 'No users found.',
+          message: 'No orders found.',
         };
       }
       return {
         status: 'success',
-        data: user,
-        message: ' User retrieve successful.',
+        data: order,
+        message: ' Order retrieve successful.',
       };
     } catch (error) {
       console.log('error', error);
@@ -80,21 +86,21 @@ export class UsersService {
   //update ----------
   async update(
     id: any,
-    updateUserDTO: UpdateUserDTO,
-  ): Promise<ApiResponseDTO<UserDTO>> {
+    updateOrderDTO: UpdateOrderDTO,
+  ): Promise<ApiResponseDTO<OrderDTO>> {
     try {
-      const updatedUserData = await this.prismaService.users.update({
+      const updatedOrderData = await this.prismaService.userOrders.update({
         where: {
           id: id,
         },
         data: {
-          ...updateUserDTO,
+          ...updateOrderDTO,
         },
       });
       return {
         status: 'success',
-        data: updatedUserData,
-        message: 'User info has been updated.',
+        data: updatedOrderData,
+        message: 'Order info has been updated.',
       };
     } catch (error) {
       console.log('error', error);
@@ -104,21 +110,21 @@ export class UsersService {
   //status update ----------
   async updateStatus(
     id: any,
-    updateUserStatusDTO: object,
-  ): Promise<ApiResponseDTO<UserDTO>> {
+    updateOrderStatusDTO: UpdateOrderStatusDTO,
+  ): Promise<ApiResponseDTO<OrderDTO>> {
     try {
-      const updatedUserData = await this.prismaService.users.update({
+      const updatedOrderData = await this.prismaService.userOrders.update({
         where: {
           id: id,
         },
         data: {
-          ...updateUserStatusDTO,
+          ...updateOrderStatusDTO,
         },
       });
       return {
         status: 'success',
-        data: updatedUserData,
-        message: 'User Users status has been updated.',
+        data: new OrderDTO(updatedOrderData),
+        message: 'Order Orders status has been updated.',
       };
     } catch (error) {
       console.log('error', error);
@@ -128,7 +134,7 @@ export class UsersService {
   //remove
   async remove(id: any) {
     try {
-      return await this.prismaService.users.delete({
+      return await this.prismaService.userOrders.delete({
         where: {
           id: id,
         },

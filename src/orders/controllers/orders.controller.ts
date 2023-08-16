@@ -26,27 +26,32 @@ import {
   ApiProduces,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserDTO, CreateUserDTO, UpdateUserDTO } from 'src/users/dtos';
-import { UsersService } from 'src/users/services';
+import {
+  OrderDTO,
+  CreateOrderDTO,
+  UpdateOrderDTO,
+  UpdateOrderStatusDTO,
+} from 'src/orders/dtos';
+import { OrdersService } from 'src/orders/services';
 import { ApiExceptionResponseDTO, ApiResponseDTO } from 'src/core/dtos';
 
-@Controller('users')
+@Controller('orders')
 @ApiBearerAuth('JWT')
-@ApiTags('User API')
-export class UsersController {
-  constructor(private usersUserService: UsersService) {}
+@ApiTags('Order API')
+export class OrdersController {
+  constructor(private orderServices: OrdersService) {}
 
   @Post()
   @Version('1')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create new user.' })
+  @ApiOperation({ summary: 'Create new order.' })
   @ApiCreatedResponse({
     status: HttpStatus.CREATED,
-    type: UserDTO,
+    type: OrderDTO,
     description: 'Record has been created successfully.',
   })
   @ApiBody({
-    type: CreateUserDTO,
+    type: CreateOrderDTO,
     description: 'Data to create new record..',
     required: true,
   })
@@ -56,16 +61,16 @@ export class UsersController {
   @ApiConsumes('application/json')
   @ApiProduces('application/json')
   async create(
-    @Body() createUserDTO: CreateUserDTO,
-  ): Promise<ApiResponseDTO<UserDTO>> {
-    return await this.usersUserService.create(createUserDTO);
+    @Body() createOrderDTO: CreateOrderDTO,
+  ): Promise<ApiResponseDTO<OrderDTO>> {
+    return await this.orderServices.create(createOrderDTO);
   }
 
   @Get()
   @Version('1')
-  @ApiOperation({ summary: 'Get all user.' })
+  @ApiOperation({ summary: 'Get all orders.' })
   @ApiOkResponse({
-    type: UserDTO,
+    type: OrderDTO,
     description: 'Records have been retrieved successfully.',
     isArray: true,
   })
@@ -74,13 +79,13 @@ export class UsersController {
     description: 'No data found.',
   })
   @ApiProduces('application/json')
-  async findAll(): Promise<ApiResponseDTO<UserDTO>> {
-    return await this.usersUserService.findAll();
+  async findAll(): Promise<ApiResponseDTO<OrderDTO>> {
+    return await this.orderServices.findAll();
   }
 
   @Get(':id')
   @Version('1')
-  @ApiOperation({ summary: 'Get user by id.' })
+  @ApiOperation({ summary: 'Get order by id.' })
   @ApiParam({
     name: 'id',
     description: 'Should be an id of a user that exists in the database.',
@@ -88,7 +93,7 @@ export class UsersController {
     required: true,
   })
   @ApiOkResponse({
-    type: UserDTO,
+    type: OrderDTO,
     description: 'Record has been retrieved successfully.',
     isArray: false,
   })
@@ -97,27 +102,27 @@ export class UsersController {
     description: 'No data found.',
   })
   @ApiProduces('application/json')
-  async findOne(@Param('id') id: string): Promise<ApiResponseDTO<UserDTO>> {
-    return await this.usersUserService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<ApiResponseDTO<OrderDTO>> {
+    return await this.orderServices.findOne(id);
   }
 
   @Patch(':id')
   @Version('1')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Update user details.' })
+  @ApiOperation({ summary: 'Update order details.' })
   @ApiOkResponse({
     description: 'Record has been updated successfully.',
-    type: UserDTO,
+    type: OrderDTO,
   })
   @ApiParam({
     name: 'id',
-    description: 'Should be an id of user that exists in the database.',
+    description: 'Should be an id of order that exists in the database.',
     type: String,
     format: 'uuid',
     required: true,
   })
   @ApiBody({
-    type: UpdateUserDTO,
+    type: UpdateOrderDTO,
     description: 'Data to update record.',
     required: true,
   })
@@ -129,18 +134,51 @@ export class UsersController {
   @ApiProduces('application/json')
   async update(
     @Param('id') id: any,
-    @Body() updateUserDTO: UpdateUserDTO,
-  ): Promise<ApiResponseDTO<UserDTO>> {
-    return await this.usersUserService.update(id, updateUserDTO);
+    @Body() updateOrderDTO: UpdateOrderDTO,
+  ): Promise<ApiResponseDTO<OrderDTO>> {
+    return await this.orderServices.update(id, updateOrderDTO);
+  }
+
+  @Patch(':id/status')
+  @Version('1')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update order status.' })
+  @ApiOkResponse({
+    description: 'Record has been updated successfully.',
+    type: OrderDTO,
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Should be an id of order that exists in the database.',
+    type: String,
+    format: 'uuid',
+    required: true,
+  })
+  @ApiBody({
+    type: UpdateOrderStatusDTO,
+    description: 'Data to update record.',
+    required: true,
+  })
+  @ApiNotFoundResponse({
+    type: ApiExceptionResponseDTO,
+    description: 'No data found.',
+  })
+  @ApiConsumes('application/json')
+  @ApiProduces('application/json')
+  async updateStatus(
+    @Param('id') id: any,
+    @Body() updateOrderStatusDTO: UpdateOrderStatusDTO,
+  ): Promise<ApiResponseDTO<OrderDTO>> {
+    return await this.orderServices.updateStatus(id, updateOrderStatusDTO);
   }
 
   @Delete(':id')
   @Version('1')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete user.' })
+  @ApiOperation({ summary: 'Delete order.' })
   @ApiParam({
     name: 'id',
-    description: 'Should be an id of user that exists in the database.',
+    description: 'Should be an id of order that exists in the database.',
     type: String,
     format: 'uuid',
     required: true,
@@ -153,6 +191,6 @@ export class UsersController {
     description: 'No data found.',
   })
   async remove(@Param('id') id: string) {
-    return await this.usersUserService.remove(id);
+    return await this.orderServices.remove(id);
   }
 }
